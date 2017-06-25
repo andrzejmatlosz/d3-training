@@ -1,0 +1,13 @@
+<div class="svg-container">
+    <div>
+        <span *ngFor="let datum of data">{{datum.value}}, </span>
+    </div>
+    <button (click)="drawBarCharts()">Draw bar charts</button>
+    <button (click)="addInteractions()">Add interactions</button>
+    <button (click)="addOne()">Add one</button>
+    <button (click)="removeOne()">Remove one</button>
+    <button (click)="changeData()">Change data</button>
+    <button (click)="randomNewData()">Random new data</button>
+    <svg>
+    </svg>
+</div>

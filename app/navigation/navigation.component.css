@@ -1,0 +1,11 @@
+.navigation {
+    margin-bottom: 30px;
+}
+
+.navigation a {
+    margin-right: 10px;
+}
+
+a.active {
+    font-size: 24px;
+}

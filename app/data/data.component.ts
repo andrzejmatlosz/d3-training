@@ -32,19 +32,49 @@ export class DataComponent {
     }
 
     public drawBarCharts() {
-        
+        this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction)
+          .enter()
+            .append('rect')
+            .call(this.rectAttributes);
     }
 
-    public addInteractions() {
+    public addInteractions(selection) {
+        if (!selection) {
+            selection = this.svg.selectAll('rect');
+        }
 
+        selection
+            .on('mouseenter', function() {
+                d3.select(this)
+                    .style('fill', 'red');
+            })
+            .on('mouseleave', function() {
+                d3.select(this)
+                    .style('fill', 'yellow');
+            })
+            .on('click', function() {
+                d3.select(this)
+                    .style('fill', 'green');
+            });
     }
 
     public addOne() {
         this.data.push({ id: this.data.length, value: this.randomOneElement() });
+        this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction)
+          .enter()
+            .append('rect')
+            .call(this.rectAttributes)
+            .call(this.addInteractions);
     }
 
     public removeOne() {
         this.data.splice(2, 1);
+        this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction)
+          .exit()
+            .remove();
     }
 
     public changeData() {
@@ -53,6 +83,11 @@ export class DataComponent {
         } else {
             this.data = this.dataV1;
         }
+
+        let selection = this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction);
+        selection
+            .call(this.updateRectAttributes);
     }
 
     public randomOneElement(): number {
@@ -65,5 +100,50 @@ export class DataComponent {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ id: i, value: this.randomOneElement() });
         }
+
+        let selection = this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction);
+
+        // UPDATE
+        selection
+            .enter()
+            .append('rect')
+            .call(this.rectAttributes)
+            .attr('width', 0)
+          .merge(selection)
+            .transition()
+            .duration(1000)
+            .call(this.rectAttributes);
+
+        // REMOVE
+        selection
+            .exit()
+            .transition()
+            .duration(1000)
+            .attr('width', 0)
+            .remove();
+    }
+
+    private rectAttributes(selection) {
+        selection
+            .attr('y', function(d, i) {
+                return i * 20 + 10;
+            })
+            .attr('width', function(d) { return d.value; })
+            .attr('height', 15)
+            .style('fill', 'yellow')
+            .style('stoke', 'blue')
+            .style('stoke-width', '2px');
+    }
+
+    private updateRectAttributes(selection) {
+        selection
+            .transition()
+            .duration(1000)
+            .attr('width', function(d) { return d.value; });
+    }
+
+    private keyFunction(d, i) {
+        return d.id;
     }
 }

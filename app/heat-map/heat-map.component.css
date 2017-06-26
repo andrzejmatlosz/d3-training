@@ -1,0 +1,13 @@
+svg {
+    display: block;
+    margin-top: 50px;
+    width: 500px;
+    height: 300px;
+    border: 1px solid black;
+}
+
+:host /deep/ svg rect {
+    fill: #ccc;
+    stroke: gray;
+    stroke-width: 2px;
+}

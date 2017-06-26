@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { HomeComponent } from './home/home.component';
+import { HeatMapComponent } from './heat-map/heat-map.component';
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { HomeComponent } from './home/home.component';
         HomeComponent,
         SelectionComponent,
         DataComponent,
-        LineChartComponent
+        LineChartComponent,
+        HeatMapComponent
     ],
     bootstrap: [ AppComponent ]
 })

@@ -1,13 +1,19 @@
 svg {
     display: block;
     margin-top: 50px;
-    width: 500px;
-    height: 300px;
+    width: 100%;
+    height: 70%;
     border: 1px solid black;
 }
 
 :host /deep/ svg rect {
     fill: #ccc;
     stroke: gray;
+    stroke-width: 2px;
+}
+
+:host /deep/ svg .line {
+    fill: none;
+    stroke: red;
     stroke-width: 2px;
 }

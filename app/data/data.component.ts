@@ -31,11 +31,8 @@ export class DataComponent {
         this.svg = d3.select('svg');
     }
 
-    public drawBarCharts() {
-        this.svg.selectAll('rect')
-            .data(this.data)
-            //.enter()
-            .append('rect')
+    public rectAttributes(selection) {
+        selection
             .attr('class', 'my-rect')
             .attr('x', 0)
             .attr('y', function(d, i) {
@@ -47,16 +44,50 @@ export class DataComponent {
             });
     }
 
+    public drawBarCharts() {
+        this.svg.selectAll('rect')
+            .data(this.data)
+            .enter()
+            .append('rect')
+            .call(this.rectAttributes);
+    }
+
     public addInteractions() {
-        let selection = this.svg.selectAll('rect');
+        let selection = this.svg
+            .on('click', function() {
+                d3.select(d3.event.target).style('fill', 'green');
+            })
+
     }
 
     public addOne() {
         this.data.push({ id: this.data.length, value: this.randomOneElement() });
+
+        this.svg.selectAll('rect')
+            .data(this.data)
+            .enter()
+            .append('rect')
+            .call(this.rectAttributes);
     }
 
     public removeOne() {
         this.data.splice(2, 1);
+
+        let selection = this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction);
+
+        selection
+            .exit()
+            .transition()
+            .duration(1000)
+            .attr('width', 0)
+            .remove();
+
+        selection
+            .transition()
+            .duration(1000)
+            .delay(1000)
+            .call(this.rectAttributes);
     }
 
     public changeData() {
@@ -83,5 +114,43 @@ export class DataComponent {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ id: i, value: this.randomOneElement() });
         }
+
+        let selection = this.svg.selectAll('rect')
+            .data(this.data, this.keyFunction);
+
+        // EXIT
+        let exitSelection = selection
+            .exit();
+
+        if (exitSelection.empty()) {
+            this.makeEnterUpdate(selection);
+        } else {
+            exitSelection.transition()
+                .duration(1000)
+                .attr('width', 0)
+                .remove()
+                .on('end', () => {
+                    this.makeEnterUpdate(selection)
+                });
+        }
+    }
+
+    private makeEnterUpdate(selection) {
+        // ENTER
+        selection
+          .enter()
+            .append('rect')
+            .call(this.rectAttributes)
+            .attr('width', 0)
+          .merge(selection)
+            .transition()
+            .duration(1000)
+            .call(this.rectAttributes);
+    }
+
+    private keyFunction(d, i) {
+        console.log(d);
+        console.log(i);
+        return d.id;
     }
 }

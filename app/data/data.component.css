@@ -6,8 +6,8 @@ svg {
     border: 1px solid black;
 }
 
-:host /deep/ svg rect {
-    fill: #ccc;
-    stroke: gray;
+:host /deep/ svg .my-rect {
+    fill: yellow;
+    stroke: blue;
     stroke-width: 2px;
 }

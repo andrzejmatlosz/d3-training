@@ -32,11 +32,23 @@ export class DataComponent {
     }
 
     public drawBarCharts() {
-        
+        this.svg.selectAll('rect')
+            .data(this.data)
+            //.enter()
+            .append('rect')
+            .attr('class', 'my-rect')
+            .attr('x', 0)
+            .attr('y', function(d, i) {
+                return 10 + i * 20
+            })
+            .attr('height', 15)
+            .attr('width', function(d, i) {
+                return d.value;
+            });
     }
 
     public addInteractions() {
-
+        let selection = this.svg.selectAll('rect');
     }
 
     public addOne() {
@@ -53,6 +65,12 @@ export class DataComponent {
         } else {
             this.data = this.dataV1;
         }
+
+        this.svg.selectAll('rect')
+            .data(this.data)
+            .attr('width', function(d, i) {
+                return d.value;
+            });
     }
 
     public randomOneElement(): number {

@@ -11,3 +11,7 @@ svg {
     stroke: gray;
     stroke-width: 2px;
 }
+
+:host /deep/ svg rect.my-rect {
+    stroke: green;
+}

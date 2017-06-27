@@ -1,3 +1,4 @@
+import { HttpModule } from '@angular/http';
 import { LineChartComponent } from './line-chart/line-chart.component';
 import { DataComponent } from './data/data.component';
 import { SelectionComponent } from './selection/selection.component';
@@ -15,7 +16,8 @@ import { HeatMapComponent } from './heat-map/heat-map.component';
 @NgModule({
     imports: [
         BrowserModule,
-        AppRoutingModule
+        AppRoutingModule,
+        HttpModule
     ],
     declarations: [ 
         AppComponent,

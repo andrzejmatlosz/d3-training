@@ -6,9 +6,15 @@ import * as d3 from 'd3';
     templateUrl: 'app/selection/selection.component.html',
     styleUrls: [ 'app/selection/selection.component.css' ]
 })
-export class SelectionComponent {
+export class SelectionComponent implements OnInit {
+
+    private svg;
 
     constructor() { }
+
+    public ngOnInit() {
+
+    }
 
     public changeFill() {
         

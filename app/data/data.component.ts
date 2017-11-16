@@ -32,7 +32,42 @@ export class DataComponent {
     }
 
     public drawBarCharts() {
+        var selection = this.svg.selectAll('rect')
+            .data(this.data, function(d) {
+                console.log('HELLO');
+                return d.id;
+            });
         
+        //update
+        selection
+            .transition()
+            .attr('y', function(d, i) {
+                return d.id * 30;
+            })
+            .attr('width', function(d) {
+                return d.value;
+            });
+
+        //enter
+        selection.enter()
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', function(d, i) {
+                return d.id * 30;
+            })
+            .attr('height', 20)
+            .style('fill', 'blue')
+            .attr('width', 0)
+            .transition()
+            .attr('width', function(d) {
+                return d.value;
+            });            
+
+        //exit
+        selection.exit()
+            .transition()
+            .attr('width', 0)
+            .remove();
     }
 
     public addInteractions() {
@@ -45,6 +80,7 @@ export class DataComponent {
 
     public removeOne() {
         this.data.splice(2, 1);
+        this.drawBarCharts();
     }
 
     public changeData() {
@@ -53,6 +89,8 @@ export class DataComponent {
         } else {
             this.data = this.dataV1;
         }
+
+        this.drawBarCharts();
     }
 
     public randomOneElement(): number {
@@ -65,5 +103,7 @@ export class DataComponent {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ id: i, value: this.randomOneElement() });
         }
+
+        this.drawBarCharts();
     }
 }

@@ -27,15 +27,22 @@ export class LineChartComponent implements OnInit {
     private svg;
     private xScale;
     private xAxis;
+    private xAxisLayer;
     private yScale;
     private yAxis;
+    private yAxisLayer;
     private paintLayer;
     private line;
+    private lineFn; 
+    private width;
+    private height;
 
     constructor() { }
 
     public ngOnInit() {
         this.svg = d3.select('svg');
+        this.readSvgSize();
+        window.onresize = this.refresh.bind(this);
     }
 
     public drawLineChart() {
@@ -45,20 +52,81 @@ export class LineChartComponent implements OnInit {
         this.drawLine();
     }
 
-    private drawXAxis() {
+    private refresh() {
+        this.readSvgSize();
+        const xMinMax = d3.extent(this.data, d => d.x);
+        this.xScale
+            .domain(xMinMax)
+            .range([0, this.width]);
+        this.xAxisLayer
+            .transition()
+            .duration(2000)
+            .call(d3.axisBottom(this.xScale));
 
+        const yMinMax = d3.extent(this.data, d => d.y);
+        this.yScale
+            .range([this.height, 0])
+            .domain(yMinMax);
+        this.yAxisLayer
+            .transition()
+            .duration(2000)
+            .call(d3.axisLeft(this.yScale));
+
+        this.line
+            .datum(this.data)
+            .transition()
+            .duration(2000)
+            .attr('d', this.lineFn);
+    }
+
+    private readSvgSize() {
+        const bbox = this.svg.node().getBoundingClientRect();
+        this.width = bbox.width - this.margin.left - this.margin.right;
+        this.height = bbox.height - this.margin.top - this.margin.bottom;
+    }
+
+    private drawXAxis() {
+        const xMinMax = d3.extent(this.data, d => d.x);
+        this.xScale = d3.scaleLinear()
+            .domain(xMinMax)
+            .range([0, this.width]);
+
+        this.xAxisLayer = this.svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', `translate(${this.margin.left},${this.margin.top + this.height})`);
+        this.xAxis = this.xAxisLayer.call(d3.axisBottom(this.xScale));
     }
 
     private drawYAxis() {
+        const yMinMax = d3.extent(this.data, d => d.y);
+        this.yScale = d3.scaleLinear()
+            .domain(yMinMax)
+            .range([this.height, 0]);
 
+        this.yAxisLayer = this.svg.append('g')
+            .attr('class', 'y axis')
+            .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
+        this.yAxis = this.yAxisLayer.call(d3.axisLeft(this.yScale));
     }
 
     private preparePaintLayer() {
-        
+        this.paintLayer = this.svg.append('g')
+            .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
     }
 
     private drawLine() {
+        this.lineFn = d3.line()
+            .x((d) => { return this.xScale((d as any).x); })
+            .y((d) => { return this.yScale((d as any).y); });
 
+        this.line = this.paintLayer.append("path")
+            .datum(this.data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 1.5)
+            .attr("d", this.lineFn);
     }
 
     public randomOneElement(): number {
@@ -71,5 +139,7 @@ export class LineChartComponent implements OnInit {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ x: i * 10, y: this.randomOneElement() });
         }
+
+        this.refresh();
     }
 }

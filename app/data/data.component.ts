@@ -31,8 +31,75 @@ export class DataComponent {
         this.svg = d3.select('svg');
     }
 
+    public textAttr(selection) {
+        selection
+            .attr('x', function(d, i) {
+                return d.value + 10;
+            })
+            .text(function(d) {
+                return d.value;
+            })
+    }
+
     public drawBarCharts() {
-        
+        let selection = this.svg.selectAll('g.one-data')
+            .data(this.data, function(d, i) {
+                return d.id;
+            });
+
+        // EXIT
+        selection.exit()
+            .transition()
+            .duration(1000)
+            .attr('width', 0)
+            .remove();
+
+        // ENTER
+        let group = selection.enter()
+            .append('g')
+            .classed('one-data', true)
+            .attr('transform', function(d, i) {
+                return `translate(0, ${30 + 30 * i})`;
+            });
+        group
+            .append('text')
+            .attr('y', function(d, i) {
+                return 10;
+            })
+            .style('opacity', 0)
+            .transition()
+            .delay(1000)
+            .style('opacity', 1)
+            .call(this.textAttr);
+
+        group
+            .append('rect')
+            .attr('x', 0)
+            .attr('height', 10)
+            .attr('width', 0)
+            .transition()
+            .duration(1000)
+            .delay(1000)
+            .attr('width', function(d, i) {
+                return d.value;
+            });
+
+        // UPDATE
+        selection
+            .select('rect')
+            .transition()
+            .delay(2000)
+            .duration(1000)
+            .attr('width', function(d, i) {
+                return d.value;
+            });
+        selection
+            .select('text')
+            .datum((d) => d)
+            .transition()
+            .delay(2000)
+            .duration(1000)
+            .call(this.textAttr);
     }
 
     public addInteractions() {
@@ -45,6 +112,7 @@ export class DataComponent {
 
     public removeOne() {
         this.data.splice(2, 1);
+        this.drawBarCharts();
     }
 
     public changeData() {
@@ -53,6 +121,8 @@ export class DataComponent {
         } else {
             this.data = this.dataV1;
         }
+
+        this.drawBarCharts();
     }
 
     public randomOneElement(): number {
@@ -65,5 +135,7 @@ export class DataComponent {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ id: i, value: this.randomOneElement() });
         }
+
+        this.drawBarCharts();
     }
 }
